@@ -7,6 +7,7 @@ RESETBG="$(printf '\e[0m\n')"
 __vrsn__=1.0
 banner(){
 check_status;
+	{clear;sleep 2}
 	cat<<- EOF
 	${RED}8888888 8888888b.        .d8888b.  888                                                  
 	${RED}  888   888   Y88b      d88P  Y88b 888                                                  
