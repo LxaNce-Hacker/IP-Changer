@@ -20,6 +20,7 @@ check_status;
 	${RED}                                                                   888                  
 	${RED}                                                              Y8b d88P                  
 	${RED}                                                               "Y88P"                                
+	${RED}										Version : ${__vrsn__}
 	EOF
 }
 check_update(){
