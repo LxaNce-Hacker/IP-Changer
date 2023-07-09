@@ -7,7 +7,7 @@ Using this tool, U can change your physical ip address 😉
 
 ## Installing Process 👇
 ```$ git clone https://github.com/LxaNce-Hacker/IP-Changer```<br>
-
+```$ apt-get install pv```<br>
 ## Running Process 👇
 ```$ cd IP-Changer```<br>
 ```$ bash ipchanger.sh```<br>
