@@ -1,10 +1,17 @@
 ## LxaNce
+
+## Directories
+BASE_DIR=$(realpath "$(dirname "$BASH_SOURCE")")
+
+
 RED="$(printf '\033[31m')"  GREEN="$(printf '\033[32m')"  ORANGE="$(printf '\033[33m')"  BLUE="$(printf '\033[34m')"
 MAGENTA="$(printf '\033[35m')"  CYAN="$(printf '\033[36m')"  WHITE="$(printf '\033[37m')" BLACK="$(printf '\033[30m')"
 REDBG="$(printf '\033[41m')"  GREENBG="$(printf '\033[42m')"  ORANGEBG="$(printf '\033[43m')"  BLUEBG="$(printf '\033[44m')"
 MAGENTABG="$(printf '\033[45m')"  CYANBG="$(printf '\033[46m')"  WHITEBG="$(printf '\033[47m')" BLACKBG="$(printf '\033[40m')"
 RESETBG="$(printf '\e[0m\n')"
+
 __vrsn__=2
+
 banner(){
 	clear
 	cat<<- EOF
@@ -28,20 +35,19 @@ check_update(){
 	relase_url='https://api.github.com/repos/LxaNce-Hacker/IP-Changer/releases/latest'
 	new_version=$(curl -s "${relase_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
 	tarball_url="https://github.com/LxaNce-Hacker/IP-Changer/archive/refs/tags/${new_version}.tar.gz"
-
+	
 	if [[ $new_version != $__vrsn__ ]]; then
-		echo -ne "${ORANGE}update found\n"${WHITE}
+		echo -ne "${ORANGE}update found\n"${WHITE} | pv -qL 20
 		sleep 2
-		echo -ne "\n${GREEN}[${WHITE}+${GREEN}]${ORANGE} Downloading Update..."
+		echo -ne "\n${GREEN}[${WHITE}+${GREEN}]${ORANGE} Downloading Update..."  | pv -qL 20
 		pushd "$HOME" > /dev/null 2>&1
 		wget "${tarball_url}" -O ".IP-Changer.tar.gz"
-
 		if [[ -e ".IP-Changer.tar.gz" ]]; then
 			tar -xf .IP-Changer.tar.gz -C "$BASE_DIR" --strip-components 1 > /dev/null 2>&1
 			[ $? -ne 0 ] && { echo -e "\n\n${RED}[${WHITE}!${RED}]${RED} Error occured while extracting."; reset_color; exit 1; }
 			rm -f .IP-Changer.tar.gz
 			popd > /dev/null 2>&1
-			{ sleep 3; clear; banner_small; }
+			{ sleep 3; clear; banner; }
 			echo -ne "\n${GREEN}[${WHITE}+${GREEN}] Successfully updated! Run ipchanger again\n\n" | pv -qL 20
 			{ reset_color ; exit 1; }
 		else
@@ -52,6 +58,13 @@ check_update(){
 		echo -ne "${GREEN}Up-To-Date\n${WHITE}" | pv -qL 20 ; sleep .5
 	fi
 	clear
+}
+
+## Reset terminal colors
+reset_color() {
+	tput sgr0   # reset attributes
+	tput op     # reset color
+	return
 }
 
 ## Check Internet Status
@@ -108,105 +121,6 @@ read -p "${RED}[${WHITE}*${RED}]${GREEN} Enter New IP : ${BLUE}" ip
 sudo ifconfig $store $ip
 echo "${RED}[${WHITE}*${RED}] NOW, $store CURRENT IP : ${ORANGE}"| pv -qL 20
 ifconfig $store | grep netmask | pv -qL 20
-
-## LxaNce 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Tool Created By Prince Katiyar 
 
 ## LxaNce 
 
