@@ -1,5 +1,5 @@
 ## LxaNce
-apt-get install pv
+
 ## Directories
 BASE_DIR=$(realpath "$(dirname "$BASH_SOURCE")")
 
