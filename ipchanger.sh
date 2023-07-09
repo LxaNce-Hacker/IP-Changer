@@ -4,9 +4,9 @@ MAGENTA="$(printf '\033[35m')"  CYAN="$(printf '\033[36m')"  WHITE="$(printf '\0
 REDBG="$(printf '\033[41m')"  GREENBG="$(printf '\033[42m')"  ORANGEBG="$(printf '\033[43m')"  BLUEBG="$(printf '\033[44m')"
 MAGENTABG="$(printf '\033[45m')"  CYANBG="$(printf '\033[46m')"  WHITEBG="$(printf '\033[47m')" BLACKBG="$(printf '\033[40m')"
 RESETBG="$(printf '\e[0m\n')"
-__vrsn__=1.0
+__vrsn__=2
 banner(){
-check_status;
+	clear
 	cat<<- EOF
 	
 	${RED}8888888 8888888b.        .d8888b.  888                                                  
@@ -20,11 +20,11 @@ check_status;
 	${RED}                                                                   888                  
 	${RED}                                                              Y8b d88P                  
 	${RED}                                                               "Y88P"                                
-	${RED}										Version : ${__vrsn__}
+	${RED}										Version : ${__vrsn__} 
 	EOF
 }
 check_update(){
-	echo -ne "\n${GREEN}[${WHITE}+${GREEN}]${CYAN} Checking for update : "
+	echo -ne "\n${GREEN}[${WHITE}+${GREEN}]${CYAN} Checking for update : " | pv -qL 20
 	relase_url='https://api.github.com/repos/LxaNce-Hacker/IP-Changer/releases/latest'
 	new_version=$(curl -s "${relase_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
 	tarball_url="https://github.com/LxaNce-Hacker/IP-Changer/archive/refs/tags/${new_version}.tar.gz"
@@ -42,34 +42,171 @@ check_update(){
 			rm -f .IP-Changer.tar.gz
 			popd > /dev/null 2>&1
 			{ sleep 3; clear; banner_small; }
-			echo -ne "\n${GREEN}[${WHITE}+${GREEN}] Successfully updated! Run ipchanger again\n\n"${WHITE}
+			echo -ne "\n${GREEN}[${WHITE}+${GREEN}] Successfully updated! Run ipchanger again\n\n" | pv -qL 20
 			{ reset_color ; exit 1; }
 		else
-			echo -e "\n${RED}[${WHITE}!${RED}]${RED} Error occured while downloading."
+			echo -e "\n${RED}[${WHITE}!${RED}]${RED} Error occured while downloading." | pv -qL 20
 			{ reset_color; exit 1; }
 		fi
 	else
-		echo -ne "${GREEN}up to date\n${WHITE}" ; sleep .5
+		echo -ne "${GREEN}Up-To-Date\n${WHITE}" | pv -qL 20 ; sleep .5
 	fi
 	clear
 }
 
 ## Check Internet Status
 check_status() {
-	echo -ne "\n${GREEN}[${WHITE}+${GREEN}]${CYAN} Internet Status : "
+	banner;
+	echo -ne "\n${GREEN}[${WHITE}+${GREEN}]${CYAN} Internet Status : " | pv -qL 20
 	timeout 3s curl -fIs "https://api.github.com" > /dev/null
-	[ $? -eq 0 ] && echo -e "${GREEN}Online${WHITE}" && check_update || echo -e "${RED}Offline${WHITE}"
+	[ $? -eq 0 ] && echo -e "${GREEN}Online${WHITE}" && check_update || echo -e "${RED}Offline${WHITE}" | pv -qL 20
 }
+
+check_status;
 banner;
-echo "                 ${MAGENTA}TOOL CREATED BY : ${BLUE}LxaNce (Prince Katiyar)"
-echo "          ${RED}[${GREEN} THIS TOOL IS CREATED FOR EDUCATIONAL PURPOSE ONLY ${RED}]"
+echo "			${MAGENTA}TOOL CREATED BY : ${BLUE}LxaNce (Prince Katiyar)" | pv -qL 20
+echo "		  ${RED}[${GREEN} THIS TOOL IS CREATED FOR EDUCATIONAL PURPOSES ONLY ${RED}]" | pv -qL 20
 echo ""
-echo "${RED}[${WHITE}*${RED}] YOUR REAL ETH0 IP : ${ORANGE}" 
-ifconfig eth0 | grep netmask | grep inet
+
+
+store=""
+# Checking IP with Internet via ETH/WI-FI
+ifconfig wlan0 > /dev/null 2>&1
+if [ $? -ne 1 ]; then
+	ifconfig wlan0 | grep netmask | grep inet > /dev/null
+	if [ $? -ne 1 ]; then
+    		echo "${RED}[${WHITE}*${RED}] YOUR REAL WLAN0 IP : ${ORANGE}" | pv -qL 20
+    		ifconfig wlan0 | grep netmask | grep inet | pv -qL 20
+    		store="wlan0"
+	else
+    		ifconfig eth0 > /dev/null 2>&1
+    		if [ $? -ne 1 ]; then
+    			ifconfig eth0 | grep netmask | grep inet > /dev/null
+    			if [ $? -ne 1 ]; then
+        			echo "${RED}[${WHITE}*${RED}] YOUR REAL ETH0 IP : ${ORANGE}" | pv -qL 20
+        			ifconfig eth0 | grep netmask | grep inet | pv -qL 20
+        			store="eth0"
+    			else
+    				ifconfig usb0 > /dev/null 2>&1
+				if [ $? -ne 1 ]; then
+    					ifconfig usb0 | grep netmask | grep inet > /dev/null
+    					if [ $? -ne 1 ]; then
+        					echo "${RED}[${WHITE}*${RED}] YOUR REAL USB0 IP : ${ORANGE}" | pv -qL 20
+        					ifconfig usb0 | grep netmask | grep inet | pv -qL 20
+        					store="usb0"
+        				fi
+        			else
+    					echo "No IP Found." | pv -qL 20 && exit
+    				fi
+        		fi
+	    	fi
+	fi
+fi
+
+
 read -p "${RED}[${WHITE}*${RED}]${GREEN} Enter New IP : ${BLUE}" ip
-sudo ifconfig eth0 $ip
-echo "${RED}[${WHITE}*${RED}] NOW, CURRENT IP : ${ORANGE}"
-ifconfig eth0 | grep netmask 
+sudo ifconfig $store $ip
+echo "${RED}[${WHITE}*${RED}] NOW, $store CURRENT IP : ${ORANGE}"| pv -qL 20
+ifconfig $store | grep netmask | pv -qL 20
+
+## LxaNce 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Tool Created By Prince Katiyar 
 
 ## LxaNce 
 
