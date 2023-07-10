@@ -30,6 +30,39 @@ banner(){
 	${RED}										Version : ${__vrsn__} 
 	EOF
 }
+
+# Function to check and install dependencies
+check_dependencies() {
+	clear && banner;
+    if ! command -v pv > /dev/null; then
+        echo -e "${GREEN}[${WHITE}+${GREEN}]${CYAN} Installing 'pv' package..." | pv -qL 20
+
+        # Check if running on Termux (Android)
+        if [[ $(uname -o) == "Android" ]]; then
+            pkg install pv
+        else
+            # Check if running on Linux
+            if command -v apt-get > /dev/null; then
+                sudo apt-get update
+                sudo apt-get install -y pv
+            elif command -v yum > /dev/null; then
+                sudo yum install -y pv
+            elif command -v dnf > /dev/null; then
+                sudo dnf install -y pv
+            elif command -v zypper > /dev/null; then
+                sudo zypper install -y pv
+            else
+                echo -e "${RED}[${WHITE}!${RED}]${RED} Unable to install 'pv' package. Please install it manually." | pv -qL 20
+                exit 1
+            fi
+        fi
+
+        echo -e "${GREEN}[${WHITE}+${GREEN}]${CYAN} 'pv' package installed successfully." | pv -qL 20
+    else
+        echo -e "${GREEN}[${WHITE}+${GREEN}]${CYAN} 'pv' package is already installed. Skipping installation." | pv -qL 20
+    fi
+}
+
 check_update(){
 	echo -ne "\n${GREEN}[${WHITE}+${GREEN}]${CYAN} Checking for update : " | pv -qL 20
 	relase_url='https://api.github.com/repos/LxaNce-Hacker/IP-Changer/releases/latest'
@@ -75,71 +108,67 @@ check_status() {
 	[ $? -eq 0 ] && echo -e "${GREEN}Online${WHITE}" && check_update || echo -e "${RED}Offline${WHITE}" | pv -qL 20
 }
 
-check_status;
-banner;
-echo "			${MAGENTA}TOOL CREATED BY : ${BLUE}LxaNce (Prince Katiyar)" | pv -qL 20
-echo "		  ${RED}[${GREEN} THIS TOOL IS CREATED FOR EDUCATIONAL PURPOSES ONLY ${RED}]" | pv -qL 20
-echo ""
+## Main Menu
+main_menu(){
+	banner;
+	
+	echo "			${MAGENTA}TOOL CREATED BY : ${BLUE}LxaNce (Prince Katiyar)" | pv -qL 20
+	echo "		  ${RED}[${GREEN} THIS TOOL IS CREATED FOR EDUCATIONAL PURPOSES ONLY ${RED}]" | pv -qL 20
+	echo ""
 
-
-store=""
-# Checking IP with Internet via ETH/WI-FI
-ifconfig wlan0 > /dev/null 2>&1
-if [ $? -ne 1 ]; then
-	ifconfig wlan0 | grep netmask | grep inet > /dev/null
+	store=""
+	# Checking IP with Internet via ETH/WI-FI
+	ifconfig wlan0 > /dev/null 2>&1
 	if [ $? -ne 1 ]; then
-    		echo "${RED}[${WHITE}*${RED}] YOUR REAL WLAN0 IP : ${ORANGE}" | pv -qL 20
-    		ifconfig wlan0 | grep netmask | grep inet | pv -qL 20
-    		store="wlan0"
-	else
-    		ifconfig eth0 > /dev/null 2>&1
-    		if [ $? -ne 1 ]; then
-    			ifconfig eth0 | grep netmask | grep inet > /dev/null
-    			if [ $? -ne 1 ]; then
-        			echo "${RED}[${WHITE}*${RED}] YOUR REAL ETH0 IP : ${ORANGE}" | pv -qL 20
-        			ifconfig eth0 | grep netmask | grep inet | pv -qL 20
-        			store="eth0"
-    			else
-    				ifconfig usb0 > /dev/null 2>&1
-				if [ $? -ne 1 ]; then
-    					ifconfig usb0 | grep netmask | grep inet > /dev/null
-    					if [ $? -ne 1 ]; then
-        					echo "${RED}[${WHITE}*${RED}] YOUR REAL USB0 IP : ${ORANGE}" | pv -qL 20
-        					ifconfig usb0 | grep netmask | grep inet | pv -qL 20
-        					store="usb0"
-        				fi
-        			else
-    					echo "No IP Found." | pv -qL 20 && exit
-    				fi
-        		fi
-	    	fi
+		ifconfig wlan0 | grep netmask | grep inet > /dev/null
+		if [ $? -ne 1 ]; then
+	    		echo "${RED}[${WHITE}*${RED}] YOUR REAL WLAN0 IP : ${ORANGE}" | pv -qL 20
+	    		ifconfig wlan0 | grep netmask | grep inet | pv -qL 20
+	    		store="wlan0"
+		else
+	    		ifconfig eth0 > /dev/null 2>&1
+	    		if [ $? -ne 1 ]; then
+	    			ifconfig eth0 | grep netmask | grep inet > /dev/null
+	    			if [ $? -ne 1 ]; then
+	        			echo "${RED}[${WHITE}*${RED}] YOUR REAL ETH0 IP : ${ORANGE}" | pv -qL 20
+	        			ifconfig eth0 | grep netmask | grep inet | pv -qL 20
+	        			store="eth0"
+	    			else
+	    				ifconfig usb0 > /dev/null 2>&1
+					if [ $? -ne 1 ]; then
+	    					ifconfig usb0 | grep netmask | grep inet > /dev/null
+	    					if [ $? -ne 1 ]; then
+	        					echo "${RED}[${WHITE}*${RED}] YOUR REAL USB0 IP : ${ORANGE}" | pv -qL 20
+	        					ifconfig usb0 | grep netmask | grep inet | pv -qL 20
+	        					store="usb0"
+	        				fi
+	        			else
+	    					echo "No IP Found." | pv -qL 20 && exit
+	    				fi
+	        		fi
+		    	fi
+		fi
 	fi
-fi
 
 
-read -p "${RED}[${WHITE}*${RED}]${GREEN} Enter New IP : ${BLUE}" ip
-sudo ifconfig $store $ip
-echo "${RED}[${WHITE}*${RED}] NOW, $store CURRENT IP : ${ORANGE}"| pv -qL 20
-ifconfig $store | grep netmask | pv -qL 20
+	read -p "${RED}[${WHITE}*${RED}]${GREEN} Enter New IP : ${BLUE}" ip
+	sudo ifconfig $store $ip
+	echo "${RED}[${WHITE}*${RED}] NOW, $store CURRENT IP : ${ORANGE}"| pv -qL 20
+	ifconfig $store | grep netmask | pv -qL 20
+}
+
+
+
+
+#Function Calling
+check_dependencies;
+check_status;
+main_menu;
+
+
+
 
 ## LxaNce 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
