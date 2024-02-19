@@ -118,39 +118,41 @@ main_menu(){
 
 	store=""
 	# Checking IP with Internet via ETH/WI-FI
-	ifconfig wlan0 > /dev/null 2>&1
-	if [ $? -ne 1 ]; then
-		ifconfig wlan0 | grep netmask | grep inet > /dev/null
-		if [ $? -ne 1 ]; then
-	    		echo "${RED}[${WHITE}*${RED}] YOUR REAL WLAN0 IP : ${ORANGE}" | pv -qL 20
-	    		ifconfig wlan0 | grep netmask | grep inet | pv -qL 20
-	    		store="wlan0"
-		else
-	    		ifconfig eth0 > /dev/null 2>&1
-	    		if [ $? -ne 1 ]; then
-	    			ifconfig eth0 | grep netmask | grep inet > /dev/null
-	    			if [ $? -ne 1 ]; then
-	        			echo "${RED}[${WHITE}*${RED}] YOUR REAL ETH0 IP : ${ORANGE}" | pv -qL 20
-	        			ifconfig eth0 | grep netmask | grep inet | pv -qL 20
-	        			store="eth0"
-	    			else
-	    				ifconfig usb0 > /dev/null 2>&1
-					if [ $? -ne 1 ]; then
-	    					ifconfig usb0 | grep netmask | grep inet > /dev/null
-	    					if [ $? -ne 1 ]; then
-	        					echo "${RED}[${WHITE}*${RED}] YOUR REAL USB0 IP : ${ORANGE}" | pv -qL 20
-	        					ifconfig usb0 | grep netmask | grep inet | pv -qL 20
-	        					store="usb0"
-	        				fi
-	        			else
-	    					echo "No IP Found." | pv -qL 20 && exit
-	    				fi
-	        		fi
-		    	fi
+		check_ip() {
+		interface=$1
+		ifconfig "$interface" > /dev/null 2>&1
+		if [ $? -eq 0 ]; then
+			ip_address=$(ifconfig "$interface" | awk '/inet / {print $2}')
+			if [ -n "$ip_address" ]; then
+				echo -e "${RED}[${WHITE}*${RED}] YOUR REAL ${interface^^} IP : ${ORANGE}${ip_address}"
+				store="$interface"
+			fi
 		fi
+	}
+
+	check_ip "wlan0"
+
+	if [ -z "$store" ]; then
+		check_ip "eth0"
 	fi
 
+	if [ -z "$store" ]; then
+		check_ip "enp2s0"
+	fi
 
+	if [ -z "$store" ]; then
+		check_ip "wlo1"
+	fi
+
+	if [ -z "$store" ]; then
+		check_ip "usb0"
+	fi
+
+	# If no IP found, exit
+	if [ -z "$store" ]; then
+		echo "No IP Found." && exit 1
+	fi
+ 
 	read -p "${RED}[${WHITE}*${RED}]${GREEN} Enter New IP : ${BLUE}" ip
 	sudo ifconfig $store $ip
 	echo "${RED}[${WHITE}*${RED}] NOW, $store CURRENT IP : ${ORANGE}"| pv -qL 20
