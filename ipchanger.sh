@@ -10,7 +10,7 @@ REDBG="$(printf '\033[41m')"  GREENBG="$(printf '\033[42m')"  ORANGEBG="$(printf
 MAGENTABG="$(printf '\033[45m')"  CYANBG="$(printf '\033[46m')"  WHITEBG="$(printf '\033[47m')" BLACKBG="$(printf '\033[40m')"
 RESETBG="$(printf '\e[0m\n')"
 
-__vrsn__=2.0
+__vrsn__=2.1
 
 banner(){
 	clear
@@ -124,7 +124,7 @@ main_menu(){
 		if [ $? -eq 0 ]; then
 			ip_address=$(ifconfig "$interface" | awk '/inet / {print $2}')
 			if [ -n "$ip_address" ]; then
-				echo -e "${RED}[${WHITE}*${RED}] YOUR REAL ${interface^^} IP : ${ORANGE}${ip_address}"
+				echo -e "${RED}[${WHITE}*${RED}] YOUR REAL ${interface^^} IP : ${ORANGE}${ip_address}" | pv -qL 20
 				store="$interface"
 			fi
 		fi
