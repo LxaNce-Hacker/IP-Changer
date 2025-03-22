@@ -2,7 +2,7 @@
 Using this tool, U can change your physical ip address 😉
 ### THIS TOOL IS CREATED FOR EDUCATIONAL PURPOSE, DON'T MISUSE IT.
 <p align="center">
-  <img src="Ipchanger.png">
+  <img src=".img/Banner.png">
 </p>
 
 ## Installing Process 👇
@@ -15,5 +15,5 @@ Using this tool, U can change your physical ip address 😉
 ## Workflow 👇
 <br>
 <p align="center">
-  <img src="IPchanger.png.png">
+  <img src=".img/IPchanger.png">
 </p>
