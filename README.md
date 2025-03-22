@@ -10,8 +10,8 @@ Using this tool, U can change your physical ip address 😉
 ```$ apt-get install pv```<br>
 ## Running Process 👇
 ```$ cd IP-Changer```<br>
-```$ bash ipchanger.sh```<br>
-
+```$ chmod +x ipchanger.sh```<br>
+```$ sudo ./ipchanger.sh```<br>
 ## Workflow 👇
 <br>
 <p align="center">
